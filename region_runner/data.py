@@ -9,6 +9,8 @@ bp = Blueprint('data', __name__, url_prefix='/data')
 
 @bp.route('/get-data', methods=('GET', 'POST'))
 def get_data():
+    stations = db.execute("""SELECT UNIQUE name FROM stations""")
+
     if request.method == 'POST':
         db = get_db()
         error = None
@@ -27,8 +29,8 @@ def get_data():
                     error = er
                 
         if error is None:
-                return render_template('/data/get-data.html')
+                return render_template('/data/get-data.html', stations=stations)
 
         flash(error)
 
-    return render_template('/data/get-data.html')
+    return render_template('/data/get-data.html', stations=stations)
