@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import (Flask, redirect, url_for)
 
 
 def create_app(test_config=None):
@@ -24,15 +24,14 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    @app.route('/')
+    def landing():
+        return redirect(url_for('data.get_data'))
     
     from . import db
     db.init_app(app)
 
-    from . import dataview
-    app.register_blueprint(dataview.bp)
+    from . import data
+    app.register_blueprint(data.bp)
 
     return app
