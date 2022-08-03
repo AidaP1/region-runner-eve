@@ -5,11 +5,15 @@
 {% endblock %}
 
 {% block content %}
-  {% for station in stations %}
-    {{ station.name }}
-  {% endfor %}
-
-  <form method="post">
+<form method="post">
+    {% for region in regions %}
+      {% set region_alias = 'region' ~ loop.index %}
+      <input type="checkbox" id="{{ region_alias }}"" name="{{ region_alias }}"" value="{{ region.name }}"">
+      <label for="{{ region_alias }}"> {{ region.name }}</label><br>
+    {% endfor %}
     <input type="submit" value="Get Data">
   </form>
+  {% for o in o_list %}
+    {{ o.station_id }} : {{ o.count }} <br>
+  {% endfor %}
 {% endblock %}

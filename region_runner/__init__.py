@@ -26,12 +26,12 @@ def create_app(test_config=None):
 
     @app.route('/')
     def landing():
-        return redirect(url_for('data.get_markets'))
+        return redirect(url_for('data.get_data'))
     
     from . import db
     db.init_app(app)
 
-    from . import data
-    app.register_blueprint(data.bp)
+    from . import get_data
+    app.register_blueprint(get_data.bp)
 
     return app
