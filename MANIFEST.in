@@ -1,0 +1,4 @@
+include region_runner/schema.sql
+graft region_runner/static
+graft region_runner/templates
+global-exclude *.pyc

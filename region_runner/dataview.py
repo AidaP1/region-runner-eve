@@ -1,12 +1,8 @@
-import functools
-import grequests
-import time
-from requests.exceptions import HTTPError
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from region_runner.db import get_db
+from region_runner.get_esi.get_concurrent import get_concurrent_reqs
 
 bp = Blueprint('dataview', __name__, url_prefix='/dataview')
 
@@ -23,8 +19,10 @@ def search():
         elif not to_system:
             error = '"To" system is required.'
 
+        orders = get_concurrent_reqs()
+
         if error is None:
-                return redirect(url_for("dataview.results"))
+                return render_template('/dataview/search.html', orders=orders)
 
         flash(error)
 
