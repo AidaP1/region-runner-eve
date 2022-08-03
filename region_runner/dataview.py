@@ -1,6 +1,7 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from datetime import datetime
 from region_runner.db import get_db
 from region_runner.get_esi.get_concurrent import get_concurrent_reqs
 
@@ -20,15 +21,16 @@ def search():
             error = '"To" system is required.'
 
         orders = get_concurrent_reqs()
+        date_today = str(datetime.now)
         if orders:
             for order in orders:
                 try:
-                    db.execute(
-                        "INSERT INTO fnm6_orders (duration, buy, issued, location_id, min_volume, order_id, price, order_range, typeid, volume_remaining, total_volume) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (order["duration"],order["buy"], order["issued"], order["location_id"], order["min_volume"], order["order_id"], order["price"], order["order_range"], order["typeid"], order["volume_remaining"], order["total_volume"])
+                    db.executemany(
+                        "INSERT INTO orders (duration, is_buy_order, issued, station_id, min_volume, order_id, price, order_range, typeid, volume_remaining, total_volume, extracted_timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (order["duration"],order["is_buy_order"], order["issued"], order["location_id"], order["min_volume"], order["order_id"], order["price"], order["range"], order["type_id"], order["volume_remain"], order["volume_total"], date_today)
                     )
                     db.commit()
-                except:
-                    error = "DB error"
+                except db.Error as er:
+                    error = er
                 
         if error is None:
                 return render_template('/dataview/search.html', orders=orders)
