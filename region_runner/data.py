@@ -3,18 +3,17 @@ from flask import (
 )
 from datetime import datetime
 from region_runner.db import get_db
-from region_runner.get_esi.get_concurrent import get_concurrent_reqs
+from region_runner.get_esi.get_markets import get_concurrent_reqs
 
 bp = Blueprint('data', __name__, url_prefix='/data')
 
 @bp.route('/get-data', methods=('GET', 'POST'))
-def get_data():
-    stations = db.execute("""SELECT UNIQUE name FROM stations""")
+def get_station():
+    db = get_db()
+    stations = db.execute("""SELECT name FROM stations""").fetchall()
 
     if request.method == 'POST':
-        db = get_db()
         error = None
-
         orders = get_concurrent_reqs()
         date_today = str(datetime.now)
         if orders:

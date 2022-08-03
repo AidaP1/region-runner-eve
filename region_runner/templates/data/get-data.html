@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block content %}
+  {% for station in stations %}
+    {{ station.name }}
+  {% endfor %}
+
   <form method="post">
     <input type="submit" value="Get Data">
   </form>

@@ -26,6 +26,11 @@ def init_db():
     with current_app.open_resource('./schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
+def load_locations():
+    db = get_db()
+    with current_app.open_resource('./static/locations.sql') as f:
+        db.executescript(f.read().decode('utf8'))
+
 
 @click.command('init-db')
 def init_db_command():
@@ -33,6 +38,12 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
+@click.command('load-locations')
+def load_locations_command():
+    load_locations()
+    click.echo('Loaded locations.')
+
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(load_locations_command)
