@@ -1,37 +1,38 @@
 import grequests
 from requests.exceptions import HTTPError
 
-MARKET_URL = "https://esi.evetech.net/latest/markets/10000002/orders/"
 
-# for testing purposes only
-def get_first_page():
-    req = grequests.get(MARKET_URL).send()
-    res = req.response
+def get_structure_data(id):
+    url = "https://esi.evetech.net/latest/markets/structures/"+str(id)
+    resp = get_concurrent_reqs(url)
+    return resp
 
-    return res
+def get_region_data(id):
+    url = "https://esi.evetech.net/latest/markets/"+str(id)+"/orders/"
+    resp = get_concurrent_reqs(url)
+    return resp
+
 
 # actual code below
-def concurrent_requests(pages):
+def concurrent_requests(pages, url):
     reqs = []
     for page in range(2, pages + 1):
-        req = grequests.get(MARKET_URL, params={'page': page})
+        req = grequests.get(url, params={'page': page})
         reqs.append(req)
 
     responses = grequests.map(reqs)
-
-
     return responses
 
-def get_concurrent_reqs():
+def get_concurrent_reqs(url):
     all_orders = []
-    req = grequests.get(MARKET_URL).send()
+    req = grequests.get(url).send()
     res = req.response
 
     res.raise_for_status()
 
     all_orders.extend(res.json())
     pages = int(res.headers['X-Pages'])
-    responses = concurrent_requests(pages)
+    responses = concurrent_requests(pages, url)
 
     for response in responses:
         try:

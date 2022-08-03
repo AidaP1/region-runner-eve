@@ -26,7 +26,7 @@ def create_app(test_config=None):
 
     @app.route('/')
     def landing():
-        return redirect(url_for('data.get_data'))
+        return redirect(url_for('data.get_markets'))
     
     from . import db
     db.init_app(app)
