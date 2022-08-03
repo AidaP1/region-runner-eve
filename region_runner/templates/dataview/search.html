@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Dataview{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="from_system">Username</label>
+    <input name="from_system" id="from_system" required>
+    <label for="to_system">Password</label>
+    <input name="to_system" id="to_system" required>
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}

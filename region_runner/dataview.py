@@ -10,45 +10,22 @@ from region_runner.db import get_db
 
 bp = Blueprint('dataview', __name__, url_prefix='/dataview')
 
+@bp.route('/search', methods=('GET', 'POST'))
+def search():
+    if request.method == 'POST':
+        from_system = request.form['from_system']
+        to_system = request.form['to_system']
+        db = get_db()
+        error = None
 
-MARKET_URL = "https://esi.tech.ccp.is/v1/markets/10000042/orders/"
+        if not from_system:
+            error = '"From" system is required.'
+        elif not to_system:
+            error = '"To" system is required.'
 
+        if error is None:
+                return redirect(url_for("dataview.results"))
 
-def concurrent_requests(pages):
-    reqs = []
-    start_time = time.time()
+        flash(error)
 
-    for page in range(2, pages + 1):
-        req = grequests.get(MARKET_URL, params={'page': page})
-        reqs.append(req)
-
-    responses = grequests.map(reqs)
-
-    end_time = time.time()
-    elapsed = end_time - start_time
-    print('Elapsed time for {} requests was: {}'.format(len(responses), elapsed))
-
-    return responses
-
-
-if __name__ == '__main__':
-    all_orders = []
-    req = grequests.get(MARKET_URL).send()
-    res = req.response
-
-    res.raise_for_status()
-
-    all_orders.extend(res.json())
-    pages = int(res.headers['X-Pages'])
-    responses = concurrent_requests(pages)
-
-    for response in responses:
-        try:
-            response.raise_for_status()
-        except HTTPError:
-            print('Received status code {} from {}'.format(response.status_code, response.url))
-            continue
-
-        data = response.json()
-        all_orders.extend(data)
-    print('Got {:,d} orders.'.format(len(all_orders)))
+    return render_template('/dataview/search.html')
