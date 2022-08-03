@@ -1,6 +1,7 @@
 import functools
 import grequests
 import time
+from requests.exceptions import HTTPError
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -9,7 +10,6 @@ from region_runner.db import get_db
 
 bp = Blueprint('dataview', __name__, url_prefix='/dataview')
 
-from requests.exceptions import HTTPError
 
 MARKET_URL = "https://esi.tech.ccp.is/v1/markets/10000042/orders/"
 
