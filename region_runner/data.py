@@ -22,7 +22,7 @@ def get_data():
         for region in regions_to_pull:
             error = None
             orders = get_region_data(region)
-            date_time = str(datetime.now)
+            date_time = str(datetime.now())
             if orders:
                 for order in orders:
                     try:
@@ -48,8 +48,9 @@ def show_data():
     with current_app.open_resource('./static/query/dynamic-region-summary.sql') as f:
         query = f.read().decode('utf8')
 
-    station_id = 60003760
-    params = """AND station_id ={}""".format(station_id)
+    from_id = 60003760
+    to_id = 1
+    params = """AND station_id ={}""".format(from_id, to_id)
     res = db.execute(query.format(params)).fetchall()
 
     for row in res:
