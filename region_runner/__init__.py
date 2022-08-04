@@ -31,7 +31,8 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import get_data
-    app.register_blueprint(get_data.bp)
+    from . import data
+    app.register_blueprint(data.bp)
+    
 
     return app
