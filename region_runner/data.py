@@ -1,4 +1,3 @@
-
 from flask import (
     Blueprint, flash, g, current_app, render_template, request
 )
@@ -62,7 +61,6 @@ def show_data():
 
         try:    
             res = db.execute(query.format(from_id, to_id)).fetchall()
-            flash(res)
         except db.Error as er:
             error = er
 
@@ -70,13 +68,13 @@ def show_data():
             orders = []
             for r in res:
                 o = {}
-                o['item_id'] = r['typeid']
+                o['typeid'] = r['typeid']
                 o['buy_price'] = r['buy_price']
                 o['sell_price'] = r['sell_price']
                 o['base_margin'] = r['base_margin']
                 orders.append(o)
 
-                return render_template('/data/show-data.html', stations= stations, orders=orders)
+            return render_template('/data/show-data.html', stations= stations, orders=orders)
 
         flash(error)
 

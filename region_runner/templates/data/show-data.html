@@ -18,10 +18,12 @@
     <td>base_margin</td>
   </tr>
     {% for o in orders %}
-      <td> {{ o.typeid }} </td>
-      <td> {{ o.buy_price }} </td>
-      <td> {{ o.sell_price }}</td>
-      <td> {{ o.base_margin }}</td>
+      <tr>
+        <td> {{ o.typeid }} </td>
+        <td> {{ o.buy_price }} </td>
+        <td> {{ o.sell_price }}</td>
+        <td> {{ o.base_margin }}</td>
+      </tr>
     {% endfor %}
 </table>
 {% endblock %}
