@@ -5,5 +5,23 @@
 {% endblock %}
 
 {% block content %}
+<form method="post">
+  <input type="submit" value="Show Data">
+</form>
 
+
+<table>
+  <tr>
+    <td>typeid</td>
+    <td>buy_price</td>
+    <td>sell_price</td>
+    <td>base_margin</td>
+  </tr>
+    {% for o in orders %}
+      <td> {{ o.typeid }} </td>
+      <td> {{ o.buy_price }} </td>
+      <td> {{ o.sell_price }}</td>
+      <td> {{ o.base_margin }}</td>
+    {% endfor %}
+</table>
 {% endblock %}

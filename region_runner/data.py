@@ -45,14 +45,39 @@ def get_data():
 @bp.route('/show-data', methods=('GET', 'POST'))
 def show_data():
     db = get_db()
-    with current_app.open_resource('./static/query/dynamic-region-summary.sql') as f:
-        query = f.read().decode('utf8')
+    stations = db.execute("""SELECT * FROM stations""").fetchall()
 
-    from_id = 60003760
-    to_id = 1
-    params = """AND station_id ={}""".format(from_id, to_id)
-    res = db.execute(query.format(params)).fetchall()
+    if request.method == 'POST':
+        error = None
+        with current_app.open_resource('static/query/dynam_arb_query.sql') as f:
+            query = f.read().decode('utf8')
 
-    for row in res:
-        flash(row['station_id'])
-    return render_template('/data/show-data.html')
+        from_id = 60003760 # request.form['from_address'] 
+        to_id = 60008494 # request.form['to_address']
+
+        if not from_id:
+            error = 'Missing from_id'
+        if not to_id:
+            error = 'Missing to_id'
+
+        try:    
+            res = db.execute(query.format(from_id, to_id)).fetchall()
+            flash(res)
+        except db.Error as er:
+            error = er
+
+        if error == None:
+            orders = []
+            for r in res:
+                o = {}
+                o['item_id'] = r['typeid']
+                o['buy_price'] = r['buy_price']
+                o['sell_price'] = r['sell_price']
+                o['base_margin'] = r['base_margin']
+                orders.append(o)
+
+                return render_template('/data/show-data.html', stations= stations, orders=orders)
+
+        flash(error)
+
+    return render_template('/data/show-data.html', stations= stations)
