@@ -107,12 +107,18 @@ def fetch_all_command():
     resp_sys = fetch_systems()
     resp_sta = fetch_stations()
     resp_typ = fetch_types()
-    if None not in [resp_reg, resp_sta, resp_sys, resp_typ]:
-        click.echo('Fetched types.')
+    error = None
+    for i in [resp_reg, resp_sta, resp_sys, resp_typ]:
+        if i != None:
+            error = 'error'
+
+    if error == None:
+        click.echo('Fetched All.')
     else:
         click.echo('Failed to fetch all')
         for i in [resp_reg, resp_sta, resp_sys, resp_typ]:
-            click.echo(i)
+            if i != None:
+                click.echo(i)
         
 
 
