@@ -9,12 +9,11 @@ def get_structure_data(id):
 
 def get_region_data(id):
     url = "https://esi.evetech.net/latest/markets/"+str(id)+"/orders/"
-    resp = get_concurrent_reqs(url)
+    resp = get_concurrent_regions(url)
     return resp
 
-
 # actual code below
-def concurrent_requests(pages, url):
+def concurrent_region_requests(pages, url):
     reqs = []
     for page in range(2, pages + 1):
         req = grequests.get(url, params={'page': page})
@@ -23,7 +22,7 @@ def concurrent_requests(pages, url):
     responses = grequests.map(reqs)
     return responses
 
-def get_concurrent_reqs(url):
+def get_concurrent_regions(url):
     all_orders = []
     req = grequests.get(url).send()
     res = req.response
@@ -32,7 +31,7 @@ def get_concurrent_reqs(url):
 
     all_orders.extend(res.json())
     pages = int(res.headers['X-Pages'])
-    responses = concurrent_requests(pages, url)
+    responses = concurrent_region_requests(pages, url)
 
     for response in responses:
         try:

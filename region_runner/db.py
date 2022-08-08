@@ -41,7 +41,6 @@ def fetch_stations():
 
 def fetch_types():
     db = get_db()
-    error = None
     url = 'https://www.fuzzwork.co.uk/dump/latest/invTypes.csv'
     
     try:
@@ -52,7 +51,6 @@ def fetch_types():
 
 def fetch_regions():
     db = get_db()
-    error = None
     url = 'https://www.fuzzwork.co.uk/dump/latest/mapRegions.csv'
     
     try:
@@ -63,7 +61,6 @@ def fetch_regions():
 
 def fetch_systems():
     db = get_db()
-    error = None
     url = 'https://www.fuzzwork.co.uk/dump/latest/mapSolarSystems.csv'
     
     try:
