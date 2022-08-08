@@ -12,17 +12,21 @@
 
 <table>
   <tr>
-    <td>typeid</td>
+    <td>type_id</td>
+    <td>type_name</td>
     <td>buy_price</td>
     <td>sell_price</td>
     <td>base_margin</td>
+    <td>volume</td>
   </tr>
     {% for o in orders %}
       <tr>
-        <td> {{ o.typeid }} </td>
+        <td> {{ o.type_id }} </td>
+        <td> {{ o.type_name }} </td>
         <td> {{ o.buy_price }} </td>
         <td> {{ o.sell_price }}</td>
         <td> {{ o.base_margin }}</td>
+        <td> {{ o.volume }} </td>
       </tr>
     {% endfor %}
 </table>

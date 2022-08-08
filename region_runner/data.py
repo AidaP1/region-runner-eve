@@ -57,10 +57,12 @@ def show_data():
             orders = []
             for r in res:
                 o = {}
-                o['typeid'] = r['typeid']
+                o['type_id'] = r['type_id']
+                o['type_name'] = r['typeName']
                 o['buy_price'] = r['buy_price']
                 o['sell_price'] = r['sell_price']
                 o['base_margin'] = r['base_margin']
+                o['volume'] = r['volume']
                 orders.append(o)
 
             return render_template('/data/show-data.html', stations= stations, orders=orders)
