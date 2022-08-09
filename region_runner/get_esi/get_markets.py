@@ -1,23 +1,22 @@
-from http.client import responses
+
 from requests.auth import HTTPBasicAuth
-import grequests, requests, os, datetime, base64
+import grequests, requests, os, datetime
 
 
 def get_access_token():
     url = 'https://login.eveonline.com/v2/oauth/token'
     call_time = datetime.datetime.now()
-    client_id = os.environ['CLIENT_ID']
+    client_id = os.environ['CLIENT_KEY']
     client_secret = os.environ['CLIENT_SECRET']
     response = requests.post(
         url,
         data={'grant_type':'refresh_token', 'refresh_token': os.environ['REFRESH_TOKEN']},
         headers={'Content-Type': 'application/x-www-form-urlencoded', 
                 'Host':'login.eveonline.com'},
-        auth=HTTPBasicAuth(client_id, client_secret))
+        auth=HTTPBasicAuth(client_id, client_secret)).json()
 
     os.environ['TOKEN_EXPIRY'] = call_time + datetime.timedelta(seconds=response['expires_in']) 
     os.environ['REFRESH_TOKEN'] = response['refresh_token']
-
     return response['access_token']
 
 def concurrent_structure_requests(pages, url, access_token):
@@ -31,7 +30,7 @@ def concurrent_structure_requests(pages, url, access_token):
 
 def get_concurrent_structures(url, access_token):
     all_orders = []
-    req = grequests.get(url).send()
+    req = grequests.get(url, header={'Authorization': 'Bearer ' + access_token}).send()
     res = req.response
 
     res.raise_for_status()
@@ -53,8 +52,10 @@ def get_concurrent_structures(url, access_token):
     return all_orders
 
 def get_structure_data(id):
-    access_req = get_access_token()
-    access_token = access_req['access_token']
+    if os.environ.get('TOKEN_EXPIRY') is None:
+        access_token = get_access_token()
+    elif datetime.datetime.now() > os.environ.get('TOKEN_EXPIRY'):
+        access_token = get_access_token()
 
     url = "https://esi.evetech.net/latest/markets/structures/1039149782071" # using mothership B to test +str(id)
     resp = get_concurrent_structures(url, access_token)

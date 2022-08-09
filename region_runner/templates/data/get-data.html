@@ -11,7 +11,19 @@
       <input type="checkbox" id="{{ region_alias }}"" name="{{ region_alias }}"" value="{{ region.regionName }}"">
       <label for="{{ region_alias }}"> {{ region.regionName }}</label><br>
     {% endfor %}
-    <input type="submit" value="Get Data">
+    <input type="submit" id="region-submit" value="Get Regions">
+  </form>
+  {% for o in o_list %}
+    {{ o.station_id }} : {{ o.count }} <br>
+  {% endfor %}
+
+  <form method="post">
+    {% for structure in structures %}
+      {% set structure_alias = 'structure' ~ loop.index %}
+      <input type="checkbox" id="{{ structure_alias }}"" name="{{ structure_alias }}"" value="{{ structure.name }}"">
+      <label for="{{ structure_alias }}"> {{ structure.name }}</label><br>
+    {% endfor %}
+    <input type="submit" id="structure-submit" value="Get Structs">
   </form>
   {% for o in o_list %}
     {{ o.station_id }} : {{ o.count }} <br>
