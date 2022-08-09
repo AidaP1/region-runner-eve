@@ -14,7 +14,6 @@ def get_access_token():
         headers={'Content-Type': 'application/x-www-form-urlencoded', 
                 'Host':'login.eveonline.com'},
         auth=HTTPBasicAuth(client_id, client_secret)).json()
-
     os.environ['TOKEN_EXPIRY'] = call_time + datetime.timedelta(seconds=response['expires_in']) 
     os.environ['REFRESH_TOKEN'] = response['refresh_token']
     return response['access_token']
