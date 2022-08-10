@@ -1,6 +1,8 @@
+import datetime
 import os
 
-from flask import (Flask, redirect, url_for)
+from flask import (Flask, redirect, url_for, g)
+from common import cache
 
 
 
@@ -11,6 +13,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'region_runner.sqlite'),
     )
+    cache.init_app(app=app, config={"CACHE_TYPE": "FileSystemCache",'CACHE_DIR': '/tmp'})
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -36,5 +39,4 @@ def create_app(test_config=None):
     from . import data
     app.register_blueprint(data.bp)
     
-
     return app

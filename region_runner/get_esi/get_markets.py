@@ -1,22 +1,25 @@
-
 from requests.auth import HTTPBasicAuth
 import grequests, requests, os, datetime
-
+from common import cache
 
 def get_access_token():
     url = 'https://login.eveonline.com/v2/oauth/token'
     call_time = datetime.datetime.now()
-    client_id = os.environ['CLIENT_KEY']
+    client_id = os.environ['CLIENT_ID']
     client_secret = os.environ['CLIENT_SECRET']
+    refresh_token = cache.get("refresh_token") or os.environ['REFRESH_TOKEN']
     response = requests.post(
         url,
-        data={'grant_type':'refresh_token', 'refresh_token': os.environ['REFRESH_TOKEN']},
+        data={'grant_type':'refresh_token', 'refresh_token': refresh_token},
         headers={'Content-Type': 'application/x-www-form-urlencoded', 
                 'Host':'login.eveonline.com'},
         auth=HTTPBasicAuth(client_id, client_secret)).json()
-    os.environ['TOKEN_EXPIRY'] = call_time + datetime.timedelta(seconds=response['expires_in']) 
-    os.environ['REFRESH_TOKEN'] = response['refresh_token']
-    return response['access_token']
+    token_expiry = call_time + datetime.timedelta(seconds=response['expires_in'])
+    refresh_token = response['refresh_token']
+    cache.set("token_expiry", token_expiry)
+    cache.set("refresh_token", refresh_token)
+    cache.set("access_token", response["access_token"])
+    return response["access_token"]
 
 def concurrent_structure_requests(pages, url, access_token):
     reqs = []
@@ -51,10 +54,12 @@ def get_concurrent_structures(url, access_token):
     return all_orders
 
 def get_structure_data(id):
-    if os.environ.get('TOKEN_EXPIRY') is None:
+    if cache.get("token_expiry") is None or cache.get("access_token") is None:
         access_token = get_access_token()
-    elif datetime.datetime.now() > os.environ.get('TOKEN_EXPIRY'):
+    elif datetime.datetime.now() > cache.get("token_expiry"):
         access_token = get_access_token()
+    else:
+        access_token = cache.get("token_expiry")
 
     url = "https://esi.evetech.net/latest/markets/structures/1039149782071" # using mothership B to test +str(id)
     resp = get_concurrent_structures(url, access_token)
