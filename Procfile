@@ -1,1 +1,1 @@
-web: gunicorn app:region_runner
+web: gunicorn region_runner:app
