@@ -1,6 +1,4 @@
 import sqlite3
-import gevent.monkey
-gevent.monkey.patch_all()
 
 import click
 import pandas as pd

@@ -1,19 +1,26 @@
+from cmath import log
 from requests.auth import HTTPBasicAuth
 import grequests, requests, os, datetime
 from common import cache
+from region_runner.db import get_db
+import pandas as pd
+import click
 
+# refresh access token with API key
 def get_access_token():
     url = 'https://login.eveonline.com/v2/oauth/token'
     call_time = datetime.datetime.now()
     client_id = os.environ['CLIENT_ID']
     client_secret = os.environ['CLIENT_SECRET']
-    refresh_token = cache.get("refresh_token") or os.environ['REFRESH_TOKEN']
+    refresh_token = os.environ['REFRESH_TOKEN']
+
     response = requests.post(
         url,
         data={'grant_type':'refresh_token', 'refresh_token': refresh_token},
         headers={'Content-Type': 'application/x-www-form-urlencoded', 
                 'Host':'login.eveonline.com'},
         auth=HTTPBasicAuth(client_id, client_secret)).json()
+
     token_expiry = call_time + datetime.timedelta(seconds=response['expires_in'])
     refresh_token = response['refresh_token']
     cache.set("token_expiry", token_expiry)
@@ -21,6 +28,7 @@ def get_access_token():
     cache.set("access_token", response["access_token"])
     return response["access_token"]
 
+# pulling player-owned structs
 def concurrent_structure_requests(pages, url, access_token):
     reqs = []
     for page in range(2, pages + 1):
@@ -61,11 +69,23 @@ def get_structure_data(id):
     else:
         access_token = cache.get("token_expiry")
 
-    url = "https://esi.evetech.net/latest/markets/structures/1039149782071" # using mothership B to test +str(id)
+    url = "https://esi.evetech.net/latest/markets/structures/" +str(id)
     resp = get_concurrent_structures(url, access_token)
     return resp
 
+def fetch_all_structures():
+    db = get_db()
+    structs_to_pull = db.execute('SELECT id FROM structures').fetchall()
+    for struct in structs_to_pull:
+        orders = get_structure_data(struct['id'])
+        date_time = str(datetime.now())
+        if orders:
+            df = pd.DataFrame(orders)
+            df = df.assign(extracted_timestamp=date_time)
+            df.to_sql('orders', con=db, if_exists='append')
 
+
+# pulling public region data
 def get_region_data(id):
     url = "https://esi.evetech.net/latest/markets/"+str(id)+"/orders/"
     resp = get_concurrent_regions(url)
@@ -103,3 +123,38 @@ def get_concurrent_regions(url):
     
     return all_orders
 
+def fetch_all_regions():
+    db = get_db()
+    regions_to_pull = db.execute("""SELECT id FROM regions""").fetchall()
+    for region in regions_to_pull:
+        orders = get_region_data(region)
+        date_time = str(datetime.now())
+        if orders:
+            df = pd.DataFrame(orders)
+            df = df.assign(extracted_timestamp=date_time)
+            df.to_sql('orders', con=db, if_exists='append')
+
+
+# CLI commands
+@click.command('fetch-region-orders')
+def fetch_all_regions_command():
+    fetch_all_regions()
+    click.echo('Fetched all public region orders.')
+
+@click.command('fetch-struct-orders')
+def fetch_all_structures_command():
+    fetch_all_structures()
+    click.echo('Fetched all player structure orders.')
+
+@click.command('fetch-all-orders')
+def fetch_all_orders_command():
+    fetch_all_structures()
+    fetch_all_regions()
+    click.echo('Fetched all orders.')
+
+
+
+def init_app(app):
+    app.cli.add_command(fetch_all_regions_command)
+    app.cli.add_command(fetch_all_structures_command)
+    app.cli.add_command(fetch_all_orders_command)

@@ -1,8 +1,12 @@
+import gevent.monkey
+gevent.monkey.patch_all()
+
 import datetime
 import os
 
-from flask import (Flask, redirect, url_for, g)
+from flask import (Flask, render_template)
 from common import cache
+from region_runner.get_esi import get_markets
 
 
 
@@ -30,7 +34,7 @@ def create_app(test_config=None):
 
     @app.route('/')
     def landing():
-        return redirect(url_for('data.get_data'))
+        return render_template('/home.html')
 
 
     from . import db
@@ -38,5 +42,9 @@ def create_app(test_config=None):
 
     from . import data
     app.register_blueprint(data.bp)
+
+    from . import get_esi
+    get_esi.get_markets.init_app(app)
+
     
     return app
