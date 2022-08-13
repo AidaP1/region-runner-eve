@@ -142,6 +142,7 @@ def fetch_all_regions():
             df.to_sql('orders', con=db, if_exists='append')
 
 
+
 # CLI commands
 @click.command('fetch-region-orders')
 def fetch_all_regions_command():
@@ -158,8 +159,6 @@ def fetch_all_orders_command():
     fetch_all_structures()
     fetch_all_regions()
     click.echo('Fetched all orders.')
-
-
 
 def init_app(app):
     app.cli.add_command(fetch_all_regions_command)
