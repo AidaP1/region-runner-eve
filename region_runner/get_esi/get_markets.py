@@ -13,6 +13,7 @@ def get_access_token():
     client_id = os.environ['CLIENT_ID']
     client_secret = os.environ['CLIENT_SECRET']
     refresh_token = os.environ['REFRESH_TOKEN']
+    # refresh_token = cache.get('refresh_token') or os.environ['REFRESH_TOKEN']
 
     response = requests.post(
         url,
@@ -32,7 +33,10 @@ def get_access_token():
 def concurrent_structure_requests(pages, url, access_token):
     reqs = []
     for page in range(2, pages + 1):
-        req = grequests.get(url, params={'page': page}, header={'Authorization': 'Bearer ' + access_token})
+        req = grequests.get(
+            url, 
+            params={'page': page}, 
+            headers={'Authorization': 'Bearer ' + access_token})
         reqs.append(req)
 
     responses = grequests.map(reqs)
@@ -40,7 +44,9 @@ def concurrent_structure_requests(pages, url, access_token):
 
 def get_concurrent_structures(url, access_token):
     all_orders = []
-    req = grequests.get(url, header={'Authorization': 'Bearer ' + access_token}).send()
+    req = grequests.get(
+        url, 
+        headers={'Authorization': 'Bearer ' + access_token}).send()
     res = req.response
 
     res.raise_for_status()
@@ -67,8 +73,9 @@ def get_structure_data(id):
     elif datetime.datetime.now() > cache.get("token_expiry"):
         access_token = get_access_token()
     else:
-        access_token = cache.get("token_expiry")
+        access_token = cache.get("access_token")
 
+    print(cache.get('refresh_token'))
     url = "https://esi.evetech.net/latest/markets/structures/" +str(id)
     resp = get_concurrent_structures(url, access_token)
     return resp
@@ -78,7 +85,7 @@ def fetch_all_structures():
     structs_to_pull = db.execute('SELECT id FROM structures').fetchall()
     for struct in structs_to_pull:
         orders = get_structure_data(struct['id'])
-        date_time = str(datetime.now())
+        date_time = str(datetime.datetime.now())
         if orders:
             df = pd.DataFrame(orders)
             df = df.assign(extracted_timestamp=date_time)
@@ -125,10 +132,10 @@ def get_concurrent_regions(url):
 
 def fetch_all_regions():
     db = get_db()
-    regions_to_pull = db.execute("""SELECT id FROM regions""").fetchall()
+    regions_to_pull = db.execute("""SELECT regionID FROM regions""").fetchall()
     for region in regions_to_pull:
-        orders = get_region_data(region)
-        date_time = str(datetime.now())
+        orders = get_region_data(region['regionId'])
+        date_time = str(datetime.datetime.now())
         if orders:
             df = pd.DataFrame(orders)
             df = df.assign(extracted_timestamp=date_time)

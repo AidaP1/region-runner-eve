@@ -8,7 +8,6 @@ bp = Blueprint('data', __name__, url_prefix='/data')
 @bp.route('/show-data', methods=('GET', 'POST'))
 def show_data():
     db = get_db()
-    message = None
     stations = db.execute("""SELECT * FROM stations""").fetchall()
     if request.method == 'POST':
         error = None
@@ -29,7 +28,6 @@ def show_data():
             error = er
 
         if error == None:
-            message = res
             orders = []
             for r in res:
                 o = {}
@@ -40,7 +38,6 @@ def show_data():
                 o['base_margin'] = r['base_margin']
                 o['volume'] = r['volume']
                 orders.append(o)
-            flash(message)
             return render_template('/data/show-data.html', stations= stations, orders=orders)
 
     
