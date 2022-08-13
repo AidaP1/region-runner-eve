@@ -4,6 +4,7 @@ import grequests, requests, os, datetime
 from common import cache
 from region_runner.db import get_db
 import pandas as pd
+import itertools as it
 import click
 
 # refresh access token with API key
@@ -141,6 +142,16 @@ def fetch_all_regions():
             df = df.assign(extracted_timestamp=date_time)
             df.to_sql('orders', con=db, if_exists='append')
 
+# get order history
+def fetch_order_history():
+    db = get_db()
+    regions_sql = db.execute("""SELECT regionID FROM regions""").fetchall()
+    types_sql = db.execute("""SELECT typeID FROM types""").fetchall()
+    regions = [list(i) for i in regions_sql]
+    types = [list(i) for i in types_sql]
+    pairs = it.product(regions, types)
+    for e in pairs:
+        print(e)
 
 
 # CLI commands
@@ -160,7 +171,13 @@ def fetch_all_orders_command():
     fetch_all_regions()
     click.echo('Fetched all orders.')
 
+@click.command('fetch-order-hist')
+def fetch_order_history_command():
+    fetch_order_history()
+    click.echo('Fetched order history.')
+
 def init_app(app):
     app.cli.add_command(fetch_all_regions_command)
     app.cli.add_command(fetch_all_structures_command)
     app.cli.add_command(fetch_all_orders_command)
+    app.cli.add_command(fetch_order_history_command)
