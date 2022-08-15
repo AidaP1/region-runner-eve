@@ -9,77 +9,47 @@ import click
 
 
 # get order history
-def concurrent_orderhistory_requests(pages, url):
-    reqs = []
-    for page in range(2, pages + 1):
-        req = grequests.get(
-            url, 
-            params={'page': page})
-        reqs.append(req)
-
-    responses = grequests.map(reqs)
-    return responses
-
-def get_concurrent_orderhistory(regionId, typeId):
-
-    
+def get_concurrent_orderhistory(pairs):
     orders = []
-    error = None
+    df = pd.DataFrame()
 
     url = 'https://esi.evetech.net/latest/markets/{}/history/?datasource=tranquility&type_id={}'
-    reqs = []
-    urls = []
-    try:
-        .format(regionId, typeId)
-        req = grequests.get(
-            url).send()
-        res = req.response
-        res.raise_for_status()
-        error = None
-    except HTTPError as er:
-        error = er
+    reqs = [url.format(p[0][0], p[1][0]) for p in pairs]
+    print(len(reqs))
+    
+    rs = (grequests.get(r) for r in reqs)
+    responses = grequests.map(rs)
 
-    if error == None:
-        # this doesn't work, as there is only 1 page per result.
-        # best case is that we can concurrenty get all the orders - will it be too much!?
-        orders.extend(res.json())
-        pages = int(res.headers['X-Pages'])
-        responses = concurrent_orderhistory_requests(pages, url)
+    for response in responses:
+        print(response.json())
+        try:
+            response.raise_for_status()
+        except HTTPError:
+            print('Received status code {} from {}'.format(response.status_code, response.url))
+            continue
 
-        for response in responses:
-            try:
-                response.raise_for_status()
-            except requests.exceptions.HTTPError:
-                print('Received status code {} from {}'.format(response.status_code, response.url))
-                continue
+        data = response.json()
+        orders.extend(data)
 
-            data = response.json()
-            orders.extend(data)
-        
         return orders
 
 # requires a list of regions and all type id's for that region
 def fetch_order_history():
     db = get_db()
     regions_sql = db.execute("""SELECT regionID FROM regions""").fetchall()
-    types_sql = db.execute("""SELECT typeID FROM types""").fetchall()
+    types_sql = db.execute("""SELECT typeID FROM types WHERE published=1 Limit 5""").fetchall()
     regions = [list(i) for i in regions_sql]
     types = [list(i) for i in types_sql]
     pairs = it.product(regions, types)
 
-
-    orders  = []
-    for p in pairs:
-        order_history = get_concurrent_orderhistory(p[0][0], p[1][0])
-        if order_history:
-            orders.extend(order_history)
-
-    
+    orders = get_concurrent_orderhistory(pairs)
     date_time = str(datetime.datetime.now())
+
+    # refac to try/except to make clear it's an error
     if orders:
         df = pd.DataFrame(orders)
         df = df.assign(extracted_timestamp=date_time)
-        df.to_sql('orders', con=db, if_exists='append')
+        df.to_sql('order_history', con=db, if_exists='append')
 
 #add to cli
 @click.command('fetch-order-hist')
