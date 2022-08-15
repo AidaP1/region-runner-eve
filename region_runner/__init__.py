@@ -6,7 +6,7 @@ import os
 
 from flask import (Flask, render_template)
 from common import cache
-from region_runner.get_esi import get_markets
+from region_runner.get_esi import get_markets, get_orderhistory
 
 
 
