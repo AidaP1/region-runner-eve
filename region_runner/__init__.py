@@ -46,5 +46,8 @@ def create_app(test_config=None):
     from . import get_esi
     get_esi.get_markets.init_app(app)
 
+    from . import get_esi
+    get_esi.get_orderhistory.init_app(app)
+
     
     return app
