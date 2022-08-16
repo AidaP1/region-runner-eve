@@ -1,1 +1,1 @@
-web: gunicorn region_runner:app
+web: gunicorn wsgi:app

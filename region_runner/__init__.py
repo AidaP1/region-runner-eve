@@ -1,3 +1,6 @@
+import gevent.monkey
+import grequests
+gevent.monkey.patch_all()
 
 import datetime
 import os
