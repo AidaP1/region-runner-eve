@@ -12,8 +12,8 @@ def get_access_token():
     call_time = datetime.datetime.now()
     client_id = os.environ['CLIENT_ID']
     client_secret = os.environ['CLIENT_SECRET']
-    refresh_token = os.environ['REFRESH_TOKEN']
-    # refresh_token = cache.get('refresh_token') or os.environ['REFRESH_TOKEN']
+    # refresh_token = os.environ['REFRESH_TOKEN']
+    refresh_token = cache.get('refresh_token') or os.environ['REFRESH_TOKEN']
 
     response = requests.post(
         url,
