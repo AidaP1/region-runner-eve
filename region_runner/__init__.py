@@ -50,5 +50,6 @@ def create_app(test_config=None):
     from . import get_esi
     get_esi.get_orderhistory.init_app(app)
 
-    
+    port_nr = int(os.environ.get("PORT", 5001))
+
     return app
