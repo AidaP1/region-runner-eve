@@ -1,7 +1,8 @@
 MANIFEST.in
+setup.cfg
 setup.py
 region_runner/__init__.py
-region_runner/dataview.py
+region_runner/data.py
 region_runner/db.py
 region_runner/schema.sql
 region_runner.egg-info/PKG-INFO
@@ -11,6 +12,12 @@ region_runner.egg-info/not-zip-safe
 region_runner.egg-info/requires.txt
 region_runner.egg-info/top_level.txt
 region_runner/get_esi/__init__.py
-region_runner/get_esi/get_concurrent.py
+region_runner/get_esi/get_markets.py
+region_runner/get_esi/get_orderhistory.py
+region_runner/static/locations.sql
+region_runner/static/query/dynam_arb_query.sql
+region_runner/static/query/dynamic_region_summary.sql
+region_runner/static/query/region_summary.sql
 region_runner/templates/base.html
-region_runner/templates/dataview/search.html
+region_runner/templates/home.html
+region_runner/templates/data/show-data.html
