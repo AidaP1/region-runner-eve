@@ -1,16 +1,19 @@
-import sqlite3
 
+from dataclasses import dataclass
+import os
+import psycopg2
 import click
 import pandas as pd
 from flask import current_app, g
 
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
+        g.db = psycopg2.connect(
+            database="region_runner_db",
+            user="postgres", 
+            password="", 
+            host="127.0.0.1", 
+            port="5432")
 
     return g.db
 
