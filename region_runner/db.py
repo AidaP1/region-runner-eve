@@ -8,12 +8,10 @@ from flask import current_app, g
 
 def get_db():
     if 'db' not in g:
+        DATABASE_URL = os.environ['DATABASE_URL']
         g.db = psycopg2.connect(
-            database="region_runner_db",
-            user="postgres", 
-            password="", 
-            host="127.0.0.1", 
-            port="5432")
+            DATABASE_URL, 
+            sslmode='require')
 
     return g.db
 
