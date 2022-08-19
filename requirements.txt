@@ -28,7 +28,6 @@ pyparsing==3.0.9
 pytest==7.1.2
 python-dateutil==2.8.2
 pytz==2022.1
--e git+https://github.com/AidaP1/region-runner-eve.git@7725b2834ce8cb65855e24ab96a1b1fa3bb53015#egg=region_runner
 requests==2.28.1
 six==1.16.0
 SQLAlchemy==1.4.40
