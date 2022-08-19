@@ -5,6 +5,7 @@ import psycopg2
 import click
 import pandas as pd
 from flask import current_app, g
+import sqlalchemy
 
 def get_db():
     if 'db' not in g:
@@ -12,6 +13,7 @@ def get_db():
         g.db = psycopg2.connect(
             DATABASE_URL, 
             sslmode='require')
+        g.conn = g.db.connect().connection
 
     return g.db
 
@@ -34,7 +36,7 @@ def fetch_stations():
     
     try:
         data = pd.read_csv(url)
-        data.to_sql('stations', con=db, if_exists='replace')
+        data.to_sql('stations', con=g.conn, if_exists='replace')
     except db.Error as er:
         return er
 
