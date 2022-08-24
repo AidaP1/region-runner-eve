@@ -1,13 +1,12 @@
 
 from dataclasses import dataclass
-import os
-import psycopg2
-import click
+import psycopg2, psycopg2.extras, click, os
 import pandas as pd
 from flask import current_app, g
 
 def get_db():
     if 'db' not in g:
+        # pulls from heroku 
         DATABASE_URL = os.environ['DATABASE_URL']
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
         g.db = psycopg2.connect(
@@ -16,10 +15,10 @@ def get_db():
 
     return g.db
 
+"""
+Gets the data into the DB
+"""
 def execute_values(conn, df, table):
-    """
-    Using psycopg2.extras.execute_values() to insert the dataframe
-    """
     # Create a list of tupples from the dataframe values
     tuples = [tuple(x) for x in df.to_numpy()]
     # Comma-separated dataframe columns
@@ -50,22 +49,23 @@ def init_db():
     with current_app.open_resource('./schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
+
+"""
+Pull all public stations
+"""
 def fetch_stations():
     db = get_db()
     error = None
-    url = 'https://www.fuzzwork.co.uk/dump/latest/staStations.csv'
-    
+    url = 'https://www.fuzzwork.co.uk/dump/latest/staStations.csv'  
     try:
         data = pd.read_csv(url)
         execute_values(db, data, 'structures')
-        # data.to_sql('stations', con=g.conn, if_exists='replace')
     except db.Error as er:
         return er
 
 def fetch_types():
     db = get_db()
     url = 'https://www.fuzzwork.co.uk/dump/latest/invTypes.csv'
-    
     try:
         data = pd.read_csv(url)
         data.to_sql('types', con=db, if_exists='replace')
