@@ -76,7 +76,7 @@ def init_db():
             reprocessingHangarFlag INTEGER DEFAULT NULL
         );
 
-        CREATE TABLE 'systems' (
+        CREATE TABLE systems (
             index INTEGER,
             regionID INTEGER,
             constellationID INTEGER,
