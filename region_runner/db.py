@@ -74,7 +74,7 @@ def init_db():
             "reprocessingEfficiency" REAL DEFAULT NULL,
             "reprocessingStationsTake" REAL DEFAULT NULL,
             "reprocessingHangarFlag" INTEGER DEFAULT NULL
-        )
+        );
 
         CREATE TABLE "systems" (
             "index" INTEGER,
