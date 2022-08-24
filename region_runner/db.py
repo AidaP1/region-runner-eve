@@ -49,6 +49,7 @@ def init_db():
     cursor = db.cursor()
     command = '''
         DROP TABLE IF EXISTS structures;
+        DROP TABLE IF EXISTS stations;
         DROP TABLE IF EXISTS systems;
         DROP TABLE IF EXISTS regions;
         DROP TABLE IF EXISTS orders;
