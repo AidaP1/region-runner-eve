@@ -55,25 +55,25 @@ def init_db():
         DROP TABLE IF EXISTS types;
         DROP TABLE IF EXISTS order_history;
 
-        CREATE TABLE `staStations` (
-            `stationID` bigint(20) NOT NULL,
-            `security` double DEFAULT NULL,
-            `dockingCostPerVolume` double DEFAULT NULL,
-            `maxShipVolumeDockable` double DEFAULT NULL,
-            `officeRentalCost` int(11) DEFAULT NULL,
-            `operationID` int(11) DEFAULT NULL,
-            `stationTypeID` int(11) DEFAULT NULL,
-            `corporationID` int(11) DEFAULT NULL,
-            `solarSystemID` int(11) DEFAULT NULL,
-            `constellationID` int(11) DEFAULT NULL,
-            `regionID` int(11) DEFAULT NULL,
-            `stationName` varchar(100) DEFAULT NULL,
-            `x` double DEFAULT NULL,
-            `y` double DEFAULT NULL,
-            `z` double DEFAULT NULL,
-            `rep rocessingEfficiency` double DEFAULT NULL,
-            `reprocessingStationsTake` double DEFAULT NULL,
-            `reprocessingHangarFlag` int(11) DEFAULT NULL
+        CREATE TABLE "stations" (
+            "stationID" bigint(20) NOT NULL,
+            "security" double DEFAULT NULL,
+            "dockingCostPerVolume" double DEFAULT NULL,
+            "maxShipVolumeDockable" double DEFAULT NULL,
+            "officeRentalCost" int(11) DEFAULT NULL,
+            "operationID" int(11) DEFAULT NULL,
+            "stationTypeID" int(11) DEFAULT NULL,
+            "corporationID" int(11) DEFAULT NULL,
+            "solarSystemID" int(11) DEFAULT NULL,
+            "constellationID" int(11) DEFAULT NULL,
+            "regionID" int(11) DEFAULT NULL,
+            "stationName" varchar(100) DEFAULT NULL,
+            "x" double DEFAULT NULL,
+            "y" double DEFAULT NULL,
+            "z" double DEFAULT NULL,
+            "rep rocessingEfficiency" double DEFAULT NULL,
+            "reprocessingStationsTake" double DEFAULT NULL,
+            "reprocessingHangarFlag" int(11) DEFAULT NULL
         )
 
         CREATE TABLE "systems" (
@@ -194,7 +194,7 @@ def fetch_stations():
     url = 'https://www.fuzzwork.co.uk/dump/latest/staStations.csv'  
     try:
         data = pd.read_csv(url)
-        execute_values(db, data, 'structures')
+        execute_values(db, data, 'stations')
     except db.Error as er:
         return er
 
