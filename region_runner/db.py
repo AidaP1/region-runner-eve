@@ -163,7 +163,7 @@ def init_db():
             average REAL,
             date TEXT,
             highest REAL,
-            lowestREAL,
+            lowest REAL,
             order_count INTEGER,
             volume INTEGER,
             regionID TEXT,
