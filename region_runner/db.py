@@ -55,25 +55,25 @@ def init_db():
         DROP TABLE IF EXISTS types;
         DROP TABLE IF EXISTS order_history;
 
-        CREATE TABLE 'stations' (
-            'stationID' INTEGER PRIMARY KEY,
-            'security' REAL DEFAULT NULL,
-            'dockingCostPerVolume' REAL DEFAULT NULL,
-            'maxShipVolumeDockable' REAL DEFAULT NULL,
-            'officeRentalCost' INTEGER DEFAULT NULL,
-            'operationID' INTEGER DEFAULT NULL,
-            'stationTypeID' INTEGER DEFAULT NULL,
-            'corporationID' INTEGER DEFAULT NULL,
-            'solarSystemID' INTEGER DEFAULT NULL,
-            'constellationID' INTEGER DEFAULT NULL,
-            'regionID' INTEGER DEFAULT NULL,
-            'stationName' TEXT DEFAULT NULL,
-            'x' REAL DEFAULT NULL,
-            'y' REAL DEFAULT NULL,
-            'z' REAL DEFAULT NULL,
-            'reprocessingEfficiency' REAL DEFAULT NULL,
-            'reprocessingStationsTake' REAL DEFAULT NULL,
-            'reprocessingHangarFlag' INTEGER DEFAULT NULL
+        CREATE TABLE stations (
+            stationID INTEGER PRIMARY KEY,
+            security REAL DEFAULT NULL,
+            dockingCostPerVolume REAL DEFAULT NULL,
+            maxShipVolumeDockable REAL DEFAULT NULL,
+            officeRentalCost INTEGER DEFAULT NULL,
+            operationID INTEGER DEFAULT NULL,
+            stationTypeID INTEGER DEFAULT NULL,
+            corporationID INTEGER DEFAULT NULL,
+            solarSystemID INTEGER DEFAULT NULL,
+            constellationID INTEGER DEFAULT NULL,
+            regionID INTEGER DEFAULT NULL,
+            stationName' TEXT DEFAULT NULL,
+            x REAL DEFAULT NULL,
+            y REAL DEFAULT NULL,
+            z REAL DEFAULT NULL,
+            reprocessingEfficiency REAL DEFAULT NULL,
+            reprocessingStationsTake REAL DEFAULT NULL,
+            reprocessingHangarFlag INTEGER DEFAULT NULL
         );
 
         CREATE TABLE 'systems' (
