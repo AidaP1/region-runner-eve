@@ -67,7 +67,7 @@ def init_db():
         CREATE TABLE "systems" (
         "index" INTEGER,
         "regionID" INTEGER,
-        "constellationID" INTEGER
+        "constellationID" INTEGER,
         "solarSystemID" INTEGER,
         "solarSystemName" TEXT,
         "x" REAL,
