@@ -56,7 +56,7 @@ def init_db():
         DROP TABLE IF EXISTS order_history;
 
         CREATE TABLE "stations" (
-            "stationID" INTEGER NOT NULL,
+            "stationID" INTEGER PRIMARY KEY,
             "security" REAL DEFAULT NULL,
             "dockingCostPerVolume" REAL DEFAULT NULL,
             "maxShipVolumeDockable" REAL DEFAULT NULL,
@@ -80,7 +80,7 @@ def init_db():
             "index" INTEGER,
             "regionID" INTEGER,
             "constellationID" INTEGER,
-            "solarSystemID" INTEGER,
+            "solarSystemID" INTEGER PRIMARY KEY,
             "solarSystemName" TEXT,
             "x" REAL,
             "y" REAL,
@@ -108,7 +108,7 @@ def init_db():
 
         CREATE TABLE "regions" (
             "index" INTEGER,
-            "regionID" INTEGER,
+            "regionID" INTEGER PRIMARY KEY,
             "regionName" TEXT,
             "x" REAL,
             "y" REAL,
@@ -131,7 +131,7 @@ def init_db():
             "issued" TEXT,
             "location_id" INTEGER,
             "min_volume" INTEGER,
-            "order_id" INTEGER,
+            "order_id" INTEGER PRIMARY KEY,
             "price" REAL,
             "range" TEXT,
             "system_id" INTEGER,
@@ -143,7 +143,7 @@ def init_db():
 
         CREATE TABLE "types" (
             "index" INTEGER,
-            "typeID" INTEGER,
+            "typeID" INTEGER PRIMARY KEY,
             "groupID" INTEGER,
             "typeName" TEXT,
             "description" TEXT,
@@ -161,7 +161,7 @@ def init_db():
         );
 
         CREATE TABLE "order_history" (
-            "index" INTEGER,
+            "index" INTEGER PRIMARY KEY,
             "average" REAL,
             "date" TEXT,
             "highest" REAL,
