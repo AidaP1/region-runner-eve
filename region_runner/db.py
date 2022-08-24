@@ -56,24 +56,24 @@ def init_db():
         DROP TABLE IF EXISTS order_history;
 
         CREATE TABLE "stations" (
-            "stationID" bigint(20) NOT NULL,
-            "security" double DEFAULT NULL,
-            "dockingCostPerVolume" double DEFAULT NULL,
-            "maxShipVolumeDockable" double DEFAULT NULL,
-            "officeRentalCost" int(11) DEFAULT NULL,
-            "operationID" int(11) DEFAULT NULL,
-            "stationTypeID" int(11) DEFAULT NULL,
-            "corporationID" int(11) DEFAULT NULL,
-            "solarSystemID" int(11) DEFAULT NULL,
-            "constellationID" int(11) DEFAULT NULL,
-            "regionID" int(11) DEFAULT NULL,
-            "stationName" varchar(100) DEFAULT NULL,
-            "x" double DEFAULT NULL,
-            "y" double DEFAULT NULL,
-            "z" double DEFAULT NULL,
-            "rep rocessingEfficiency" double DEFAULT NULL,
-            "reprocessingStationsTake" double DEFAULT NULL,
-            "reprocessingHangarFlag" int(11) DEFAULT NULL
+            "stationID" INTEGER NOT NULL,
+            "security" REAL DEFAULT NULL,
+            "dockingCostPerVolume" REAL DEFAULT NULL,
+            "maxShipVolumeDockable" REAL DEFAULT NULL,
+            "officeRentalCost" INTEGER DEFAULT NULL,
+            "operationID" INTEGER DEFAULT NULL,
+            "stationTypeID" INTEGER DEFAULT NULL,
+            "corporationID" INTEGER DEFAULT NULL,
+            "solarSystemID" INTEGER DEFAULT NULL,
+            "constellationID" INTEGER DEFAULT NULL,
+            "regionID" INTEGER DEFAULT NULL,
+            "stationName" TEXT DEFAULT NULL,
+            "x" REAL DEFAULT NULL,
+            "y" REAL DEFAULT NULL,
+            "z" REAL DEFAULT NULL,
+            "reprocessingEfficiency" REAL DEFAULT NULL,
+            "reprocessingStationsTake" REAL DEFAULT NULL,
+            "reprocessingHangarFlag" INTEGER DEFAULT NULL
         )
 
         CREATE TABLE "systems" (
