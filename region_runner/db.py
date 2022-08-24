@@ -46,8 +46,131 @@ def close_db(e=None):
 
 def init_db():
     db = get_db()
-    with current_app.open_resource('./schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    cursor = db.cursor()
+    command = """
+        DROP TABLE IF EXISTS structures;
+        DROP TABLE IF EXISTS systems;
+        DROP TABLE IF EXISTS regions;
+        DROP TABLE IF EXISTS orders;
+        DROP TABLE IF EXISTS types;
+        DROP TABLE IF EXISTS order_history;
+
+        CREATE TABLE structures (
+            id TEXT UNIQUE PRIMARY KEY,
+            name TEXT,
+            system_id INTEGER,
+            region_id INTEGER,
+            FOREIGN KEY (system_id) REFERENCES systems (id),
+            FOREIGN KEY (region_id) REFERENCES regions (id)
+        );
+
+        CREATE TABLE "systems" (
+        "index" INTEGER,
+        "regionID" INTEGER,
+        "constellationID" INTEGER
+        "solarSystemID" INTEGER,
+        "solarSystemName" TEXT,
+        "x" REAL,
+        "y" REAL,
+        "z" REAL,
+        "xMin" REAL,
+        "xMax" REAL,
+        "yMin" REAL,
+        "yMax" REAL,
+        "zMin" REAL,
+        "zMax" REAL,
+        "luminosity" REAL,
+        "border" INTEGER,
+        "fringe" INTEGER,
+        "corridor" INTEGER,
+        "hub" INTEGER,
+        "international" INTEGER,
+        "regional" INTEGER,
+        "constellation" TEXT,
+        "security" REAL,
+        "factionID" TEXT,
+        "radius" REAL,
+        "sunTypeID" TEXT,
+        "securityClass" TEXT
+        );
+
+        CREATE TABLE "regions" (
+        "index" INTEGER,
+        "regionID" INTEGER,
+        "regionName" TEXT,
+        "x" REAL,
+        "y" REAL,
+        "z" REAL,
+        "xMin" REAL,
+        "xMax" REAL,
+        "yMin" REAL,
+        "yMax" REAL,
+        "zMin" REAL,
+        "zMax" REAL,
+        "factionID" TEXT,
+        "nebula" INTEGER,
+        "radius" TEXT
+        );
+
+        CREATE TABLE "orders" (
+        "index" INTEGER,
+        "duration" INTEGER,
+        "is_buy_order" INTEGER,
+        "issued" TEXT,
+        "location_id" INTEGER,
+        "min_volume" INTEGER,
+        "order_id" INTEGER,
+        "price" REAL,
+        "range" TEXT,
+        "system_id" INTEGER,
+        "type_id" INTEGER,
+        "volume_remain" INTEGER,
+        "volume_total" INTEGER,
+        "extracted_timestamp" TEXT
+        );
+
+        CREATE TABLE "types" (
+        "index" INTEGER,
+        "typeID" INTEGER,
+        "groupID" INTEGER,
+        "typeName" TEXT,
+        "description" TEXT,
+        "mass" REAL,
+        "volume" REAL,
+        "capacity" REAL,
+        "portionSize" INTEGER,
+        "raceID" TEXT,
+        "basePrice" TEXT,
+        "published" INTEGER,
+        "marketGroupID" TEXT,
+        "iconID" TEXT,
+        "soundID" TEXT,
+        "graphicID" INTEGER
+        );
+
+        CREATE TABLE "order_history" (
+        "index" INTEGER,
+        "average" REAL,
+        "date" TEXT,
+        "highest" REAL,
+        "lowest" REAL,
+        "order_count" INTEGER,
+        "volume" INTEGER,
+        "regionID" TEXT,
+        "typeID" TEXT,
+        "extracted_timestamp" TEXT
+        );
+        CREATE INDEX "ix_order_history_index"ON "order_history" ("index");
+    """
+    try:
+        cursor.execute(command)
+        db.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        db.rollback()
+        cursor.close()
+        return 1
+    cursor.close()
 
 
 """
