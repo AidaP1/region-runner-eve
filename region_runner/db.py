@@ -59,7 +59,7 @@ def init_db():
             id TEXT UNIQUE PRIMARY KEY,
             name TEXT,
             system_id INTEGER,
-            region_id INTEGER,
+            region_id INTEGER
         );
 
         CREATE TABLE "systems" (
