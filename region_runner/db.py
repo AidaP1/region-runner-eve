@@ -238,7 +238,7 @@ def insert_known_structures():
     try:
         cur.execute("""DELETE FROM structures""")
         cur.execute("""INSERT INTO structures (structureID, regionID, structureName)
-                        VALUES (1039149782071,10000023, F-NMX6 - Mothership Bellicose)""")
+                        VALUES (1039149782071,10000023, "F-NMX6 - Mothership Bellicose")""")
         db.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print('Error: %s' % error)
