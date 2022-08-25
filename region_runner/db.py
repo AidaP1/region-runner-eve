@@ -17,6 +17,7 @@ def get_db():
 
 '''
 Gets the data into the DB
+Will delete all the existing data, under the assumption that the new data is the full, latest set
 '''
 def execute_values(conn, df, table):
     # Create a list of tupples from the dataframe values
@@ -27,6 +28,7 @@ def execute_values(conn, df, table):
     query  = 'INSERT INTO %s(%s) VALUES %%s' % (table, cols)
     cursor = conn.cursor()
     try:
+        cursor.execute('DELETE FROM %s' % (table))
         psycopg2.extras.execute_values(cursor, query, tuples)
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -224,11 +226,18 @@ def fetch_systems():
     except db.Error as er:
         return er
 
+"""
+Using a manua list of structures as these are extremely difficult to work with directly from ESI
+They require you to know the struct ID and also have acces rights in-game. 
+Mass-pulling without having access rights will begin to return 400 errors
+and the ESI error rate will trip, meaning no more queries.
+"""
 def insert_known_structures():
     db = get_db()
     cur = db.cursor()
     try:
-        psycopg2.execute("""INSERT INTO structures (structureID, solarSystemID, regionID, structureName)
+        cur.execute("""DELETE FROM structures""")
+        cur.execute("""INSERT INTO structures (structureID, solarSystemID, regionID, structureName)
                         VALUES (1039149782071, ,10000023, F-NMX6 - Mothership Bellicose)""")
         db.commit()
     except (Exception, psycopg2.DatabaseError) as error:
