@@ -29,7 +29,18 @@ def get_access_token():
     cache.set("access_token", response["access_token"])
     return response["access_token"]
 
-# pulling player-owned structs
+
+"""
+pulling orders from player-owned structs
+
+fetch_all_structures() - get all structures and queue for each
+get_structure_data() - check access tokens and queue concurrent reqs
+get_concurrent_structures() - find # of concurrent reqs (1 per page)
+concurrent_structure_requests() - execute page reqs concurrently
+
+"""
+
+
 def concurrent_structure_requests(pages, url, access_token):
     reqs = []
     for page in range(2, pages + 1):
@@ -82,7 +93,8 @@ def get_structure_data(id):
 
 def fetch_all_structures():
     db = get_db()
-    structs_to_pull = db.execute('SELECT id FROM structures').fetchall()
+    cur = db.cursor()
+    structs_to_pull = cur.execute('SELECT id FROM structures').fetchall()
     for struct in structs_to_pull:
         orders = get_structure_data(struct['id'])
         date_time = str(datetime.datetime.now())
@@ -91,8 +103,9 @@ def fetch_all_structures():
             df = df.assign(extracted_timestamp=date_time)
             df.to_sql('orders', con=db, if_exists='append')
 
-
-# pulling public region data
+"""
+pulling public region data
+"""
 def get_region_data(id):
     url = "https://esi.evetech.net/latest/markets/"+str(id)+"/orders/"
     resp = get_concurrent_regions(url)
@@ -132,7 +145,8 @@ def get_concurrent_regions(url):
 
 def fetch_all_regions():
     db = get_db()
-    regions_to_pull = db.execute("""SELECT regionID FROM regions""").fetchall()
+    cur = db.cursor()
+    regions_to_pull = cur.execute("""SELECT regionID FROM regions""").fetchall()
     for region in regions_to_pull:
         orders = get_region_data(region['regionId'])
         date_time = str(datetime.datetime.now())

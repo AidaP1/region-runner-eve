@@ -55,6 +55,13 @@ def init_db():
         DROP TABLE IF EXISTS types;
         DROP TABLE IF EXISTS order_history;
 
+        CREATE TABLE structures (
+            structureID INTEGER PRIMARY KEY,
+            solarSystemID INTEGER DEFAULT NULL,
+            regionID INTEGER DEFAULT NULL,
+            structureName TEXT DEFAULT NULL
+        );
+        
         CREATE TABLE stations (
             stationID INTEGER PRIMARY KEY,
             security REAL DEFAULT NULL,
@@ -177,6 +184,9 @@ def fetch_stations():
     except db.Error as er:
         return er
 
+"""
+Pull all types - items
+"""
 def fetch_types():
     db = get_db()
     url = 'https://www.fuzzwork.co.uk/dump/latest/invTypes.csv'
@@ -186,6 +196,9 @@ def fetch_types():
     except db.Error as er:
         return er
 
+"""
+pull all regions
+"""
 def fetch_regions():
     db = get_db()
     url = 'https://www.fuzzwork.co.uk/dump/latest/mapRegions.csv'
@@ -197,6 +210,9 @@ def fetch_regions():
     except db.Error as er:
         return er
 
+"""
+pull all systems
+"""
 def fetch_systems():
     db = get_db()
     url = 'https://www.fuzzwork.co.uk/dump/latest/mapSolarSystems.csv'
@@ -208,6 +224,23 @@ def fetch_systems():
     except db.Error as er:
         return er
 
+def insert_known_structures():
+    db = get_db()
+    cur = db.cursor()
+    try:
+        psycopg2.execute("""INSERT INTO structures (structureID, solarSystemID, regionID, structureName)
+                        VALUES (1039149782071, ,10000023, F-NMX6 - Mothership Bellicose)""")
+        db.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print('Error: %s' % error)
+        db.rollback()
+        cur.close()
+        return 1
+    cur.close()
+
+"""
+CLI commands
+"""
 @click.command('fetch-systems')
 def fetch_systems_command():
     resp = fetch_systems()
@@ -246,8 +279,9 @@ def fetch_all_command():
     resp_sys = fetch_systems()
     resp_sta = fetch_stations()
     resp_typ = fetch_types()
+    resp_struct = insert_known_structures()
     error = None
-    for i in [resp_reg, resp_sta, resp_sys, resp_typ]:
+    for i in [resp_reg, resp_sta, resp_sys, resp_typ, resp_struct]:
         if i != None:
             error = 'error'
 
@@ -255,7 +289,7 @@ def fetch_all_command():
         click.echo('Fetched All.')
     else:
         click.echo('Failed to fetch all')
-        for i in [resp_reg, resp_sta, resp_sys, resp_typ]:
+        for i in [resp_reg, resp_sta, resp_sys, resp_typ, resp_struct]:
             if i != None:
                 click.echo(i)
         
@@ -266,7 +300,6 @@ def init_db_command():
     '''Clear the existing data and create new tables.'''
     init_db()
     click.echo('Initialized the database.')
-
 
 
 def init_app(app):
