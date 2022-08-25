@@ -227,7 +227,7 @@ def fetch_systems():
         return er
 
 """
-Using a manua list of structures as these are extremely difficult to work with directly from ESI
+Using a manual list of structures as these are extremely difficult to work with directly from ESI
 They require you to know the struct ID and also have acces rights in-game. 
 Mass-pulling without having access rights will begin to return 400 errors
 and the ESI error rate will trip, meaning no more queries.
@@ -237,8 +237,8 @@ def insert_known_structures():
     cur = db.cursor()
     try:
         cur.execute("""DELETE FROM structures""")
-        cur.execute("""INSERT INTO structures (structureID, solarSystemID, regionID, structureName)
-                        VALUES (1039149782071, ,10000023, F-NMX6 - Mothership Bellicose)""")
+        cur.execute("""INSERT INTO structures (structureID, regionID, structureName)
+                        VALUES (1039149782071,10000023, F-NMX6 - Mothership Bellicose)""")
         db.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print('Error: %s' % error)
