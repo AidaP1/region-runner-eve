@@ -202,12 +202,6 @@ def fetch_regions():
     
     try:
         data = pd.read_csv(url)
-        data.rename(columns= {'xMin':'reg_xMin', 
-                        'xMax':'reg_xMax', 
-                        'zMin':'reg_zMin', 
-                        'zMax':'reg_zMax',
-                        'yMin':'reg_yMin',
-                        'yMax':'reg_yMax'}, inplace=True)
         data.to_sql('regions', con=db, if_exists='replace')
     except db.Error as er:
         return er
@@ -218,10 +212,6 @@ def fetch_systems():
     
     try:
         data = pd.read_csv(url)
-        data.rename(columns= {'xMin':'sys_xMin', 
-                                'xMax':'sys_xMax', 
-                                'zMin':'sys_zMin', 
-                                'zMax':'sys_zMax'}, inplace=True)
         data.to_sql('systems', con=db, if_exists='replace')
     except db.Error as er:
         return er
