@@ -58,7 +58,7 @@ def init_db():
         DROP TABLE IF EXISTS order_history;
 
         CREATE TABLE structures (
-            structureID INTEGER PRIMARY KEY,
+            structureID BIGINT PRIMARY KEY,
             solarSystemID INTEGER DEFAULT NULL,
             regionID INTEGER DEFAULT NULL,
             structureName TEXT DEFAULT NULL
