@@ -34,7 +34,6 @@ def execute_values(conn, df, table):
         conn.rollback()
         cursor.close()
         return 1
-    print('execute_values() done')
     cursor.close()
 
 
@@ -179,7 +178,6 @@ Pull all public stations
 '''
 def fetch_stations():
     db = get_db()
-    error = None
     url = 'https://www.fuzzwork.co.uk/dump/latest/staStations.csv'  
     try:
         data = pd.read_csv(url)
@@ -192,7 +190,7 @@ def fetch_types():
     url = 'https://www.fuzzwork.co.uk/dump/latest/invTypes.csv'
     try:
         data = pd.read_csv(url)
-        data.to_sql('types', con=db, if_exists='replace')
+        execute_values(db, data, 'types')
     except db.Error as er:
         return er
 
@@ -202,7 +200,7 @@ def fetch_regions():
     
     try:
         data = pd.read_csv(url)
-        data.to_sql('regions', con=db, if_exists='replace')
+        execute_values(db, data, 'regions')
     except db.Error as er:
         return er
 
@@ -212,7 +210,7 @@ def fetch_systems():
     
     try:
         data = pd.read_csv(url)
-        data.to_sql('systems', con=db, if_exists='replace')
+        execute_values(db, data, 'systems')
     except db.Error as er:
         return er
 
