@@ -68,9 +68,6 @@ def init_db():
             constellationID INTEGER DEFAULT NULL,
             regionID INTEGER DEFAULT NULL,
             stationName TEXT DEFAULT NULL,
-            x REAL DEFAULT NULL,
-            y REAL DEFAULT NULL,
-            z REAL DEFAULT NULL,
             reprocessingEfficiency REAL DEFAULT NULL,
             reprocessingStationsTake REAL DEFAULT NULL,
             reprocessingHangarFlag INTEGER DEFAULT NULL
@@ -82,15 +79,6 @@ def init_db():
             constellationID INTEGER,
             solarSystemID INTEGER PRIMARY KEY,
             solarSystemName TEXT,
-            x REAL,
-            y REAL,
-            z REAL,
-            xMin REAL,
-            xMax REAL,
-            yMin REAL,
-            yMax REAL,
-            zMin REAL,
-            zMax REAL,
             luminosity REAL,
             border INTEGER,
             fringe INTEGER,
@@ -110,15 +98,6 @@ def init_db():
             index INTEGER,
             regionID INTEGER PRIMARY KEY,
             regionName TEXT,
-            xMin REAL,
-            xMax REAL,
-            yMin REAL,
-            yMax REAL,
-            zMin REAL,
-            zMax REAL,
-            x REAL,
-            y REAL,
-            z REAL,
             factionID TEXT,
             nebula INTEGER,
             radius TEXT
@@ -193,6 +172,7 @@ def fetch_stations():
     url = 'https://www.fuzzwork.co.uk/dump/latest/staStations.csv'  
     try:
         data = pd.read_csv(url)
+        data.drop(['x','y','z'], axis=1, inplace=True)
         execute_values(db, data, 'stations')
     except db.Error as er:
         return er
@@ -212,6 +192,7 @@ def fetch_regions():
     
     try:
         data = pd.read_csv(url)
+        data.drop(['x','y','z','xMin','xMax','yMin','yMax','zMin','zMax'], axis=1, inplace=True)
         execute_values(db, data, 'regions')
     except db.Error as er:
         return er
@@ -222,6 +203,7 @@ def fetch_systems():
     
     try:
         data = pd.read_csv(url)
+        data.drop(['x','y','z','xMin','xMax','yMin','yMax','zMin','zMax'], axis=1, inplace=True)
         execute_values(db, data, 'systems')
     except db.Error as er:
         return er
